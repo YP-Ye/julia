@@ -9,18 +9,18 @@
 
 fname = ARGS[1]
 
-io,_ = open(pipeline(`strings -n 4 $fname`,
-                     `tr -d "() \t"`,
-                     `grep JJJ`,
-                     `sort`, `uniq -c`, `sort -g -r`,
-                     `head -n 354`))  # 102 + 252
+io = open(pipeline(`strings -n 4 $fname`,
+                   `tr -d "() \t"`,
+                   `grep JJJ`,
+                   `sort`, `uniq -c`, `sort -g -r`,
+                   `head -n 353`))  # 99 + 254
 
 function outputline(io, line)
-    row = split(line, " ", keep=false)
+    row = split(line, " ", keepempty=false)
     println(io, "jl_symbol(\"", row[2][4:end], "\"),")
 end
 
 lines = eachline(io)
 
-open(f->foreach(l->outputline(f,l), Base.Iterators.take(lines,102)), "common_symbols1.inc", "w")
+open(f->foreach(l->outputline(f,l), Base.Iterators.take(lines,99)), "common_symbols1.inc", "w")
 open(f->foreach(l->outputline(f,l), lines), "common_symbols2.inc", "w")
